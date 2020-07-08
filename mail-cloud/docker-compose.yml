@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  app:
+    build: ./mail-cloud/nextcloud
+    hostname: nextcloud-app
+    container_name: nextcloud-app
+    restart: always
+    volumes:
+      - nextcloud:/var/www/html
+      - nextcloudapps:/var/www/html/custom_apps
+      - nextcloudconfig:/var/www/html/config
+      - nextclouddata:/var/www/html/data
+    environment:
+      - SQLITE_DATABASE=nextcloud
+    networks:
+      - default
+
+  web:
+    build: ./mail-cloud/web
+    restart: always
+    hostname: nextcloud-web
+    container_name: nextcloud-web
+    volumes:
+      - nextcloud:/var/www/html:ro
+      - nextcloudapps:/var/www/html/custom_apps:ro
+      - nextcloudconfig:/var/www/html/config:ro
+      - nextclouddata:/var/www/html/data:ro
+    environment:
+      - VIRTUAL_HOST=cloud.${DOMAINNAME}
+      - LETSENCRYPT_HOST=cloud.${DOMAINNAME}
+      - LETSENCRYPT_EMAIL=support@${DOMAINNAME}
+    depends_on:
+      - app
+    networks:
+      - proxy-tier
+      - default
+
+volumes:
+  nextcloud:
+    driver: local
+  nextcloudapps:
+    driver: local
+  nextcloudconfig:
+    driver: local
+  nextclouddata:
+    driver: local
+
+networks:
+  proxy-tier:

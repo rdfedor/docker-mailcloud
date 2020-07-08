@@ -1,0 +1,6 @@
+.env
+env-mailserver
+mail-server/config
+build
+*.sqlite
+node_modules

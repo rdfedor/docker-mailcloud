@@ -1,0 +1,6 @@
+{
+  "dev": {
+    "driver": {"ENV": "SQL_DRIVER"},
+    "filename": { "ENV": "SQL_CONNECT" }
+  }
+}

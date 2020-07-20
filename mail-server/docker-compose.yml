@@ -24,18 +24,27 @@ services:
     - SYS_PTRACE
     restart: always
     depends_on:
-      - mail-manager
+      - mailmanager
 
-  mail-manager:
+  mailmanager:
     build: ./mail-server/manager
-    container_name: ${MAIL_CONTAINER_NAME}-manager
+    hostname: mail-manager
+    container_name: mail-manager
     volumes:
       - maildata:/var/mail
       - ./mail-server/config/:/tmp/docker-mailserver/
+    environment:
+      - VIRTUAL_HOST=mailman.${DOMAINNAME}
+      - VIRTUAL_PORT=8080
+      - LETSENCRYPT_HOST=mailman.${DOMAINNAME}
+      - LETSENCRYPT_EMAIL=support@${DOMAINNAME}
     env_file:
       - .env
       - env-mailserver
     restart: always
+    networks:
+      - proxy-tier
+      - default
 
   autodiscovery:
     image: jsmitsnl/docker-email-autodiscover:latest

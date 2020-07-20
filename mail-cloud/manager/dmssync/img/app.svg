@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"
+   sodipodi:docname="app.svg"
+   id="svg4"
+   viewBox="0 0 32 32"
+   version="1"
+   width="32"
+   height="32">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8">
+    <style
+       type="text/css"
+       id="style3064">
+   
+    .fil0 {fill:#FA6E1C;fill-rule:nonzero}
+   
+  </style>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2999">
+      <path
+         inkscape:connector-curvature="0"
+         d="m 0,792 1476.333,0 0,-792 L 0,0 0,792 z"
+         id="path3001" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     inkscape:guide-bbox="true"
+     showguides="true"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="svg4"
+     inkscape:window-maximized="0"
+     inkscape:window-y="23"
+     inkscape:window-x="0"
+     inkscape:cy="10.550389"
+     inkscape:cx="19.951927"
+     inkscape:zoom="8"
+     showgrid="false"
+     id="namedview6"
+     inkscape:window-height="1346"
+     inkscape:window-width="2560"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <path
+     sodipodi:nodetypes="cccssccsssccsssccsssssc"
+     d="M 16.851298,9.4946509 13.391045,8.5689409 8.8857972,24.798367 c -0.421778,1.426335 -1.9973048,2.335967 -3.443436,1.98807 C 3.9962305,26.438539 3.2589093,25.16146 3.6806873,23.735126 4.1024648,22.308791 5.6779915,21.399159 7.1241227,21.747057 l 0.8379579,-3.482303 c -1.662984,-0.400069 -3.3494128,-0.106771 -4.7416536,0.69704 -1.3922414,0.803811 -2.4903234,2.118153 -2.97534833,3.758373 -0.97004832,3.280441 1.03298913,6.749804 4.35895833,7.549937 3.3259695,0.800135 6.746954,-1.174971 7.717002,-4.455413 L 16.851298,9.4946498 c 0.616733,-2.3044449 2.549267,-3.9987767 4.91352,-4.3095298 2.364253,-0.3107537 4.671941,0.8274406 5.865389,2.894554 1.193449,2.067113 1.025311,4.634726 -0.425936,6.526853 -1.451248,1.892128 -3.885347,2.717714 -6.189423,2.099603 l -0.927949,3.460386 C 23.78047,21.15737 27.720328,19.820544 30.047482,16.786415 32.374636,13.752286 32.644912,9.600769 30.73258,6.288512 28.820247,2.976255 25.08979,1.1345616 21.298579,1.6328719 20.350778,1.7574497 19.443581,2.0223404 18.60179,2.4073433 18.286118,2.5517186 17.979938,2.7130208 17.683651,2.8901099 15.60964,4.129733 14.039848,6.1446475 13.391035,8.5689384"
+     style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:7.00001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
+     id="path1235" />
+</svg>

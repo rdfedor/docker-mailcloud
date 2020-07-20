@@ -1,8 +1,8 @@
 version: '3'
 
 services:
-  app:
-    build: ./mail-cloud/nextcloud
+  nextcloud:
+    image: nextcloud:fpm-alpine
     hostname: nextcloud-app
     container_name: nextcloud-app
     restart: always
@@ -11,6 +11,7 @@ services:
       - nextcloudapps:/var/www/html/custom_apps
       - nextcloudconfig:/var/www/html/config
       - nextclouddata:/var/www/html/data
+      - DOMAIN=${DOMAINNAME}
     environment:
       - SQLITE_DATABASE=nextcloud
     networks:
@@ -31,10 +32,41 @@ services:
       - LETSENCRYPT_HOST=cloud.${DOMAINNAME}
       - LETSENCRYPT_EMAIL=support@${DOMAINNAME}
     depends_on:
-      - app
+      - nextcloud
     networks:
       - proxy-tier
       - default
+
+  collabora:
+    image: collabora/code
+    container_name: nextcloud-collabora
+    hostname: nextcloud-collabora
+    restart: unless-stopped
+    networks:
+      - default
+    environment:
+      - VIRTUAL_PORT=9980
+      - VIRTUAL_HOST=office.${DOMAINNAME}
+      - LETSENCRYPT_HOST=office.${DOMAINNAME}
+      - LETSENCRYPT_EMAIL=support@${DOMAINNAME}
+      - domain=cloud.${DOMAINNAME}
+      - dictionaries=en
+      - extra_params=--o:ssl.enable=false
+    cap_add:
+      - MKNOD
+    tty: true
+
+  nextcloud-manager:
+    build: ./mail-cloud/manager
+    hostname: nextcloud-manager
+    container_name: nextcloud-manager
+    volumes:
+      - nextcloud:/var/www/html
+      - nextcloudapps:/var/www/html/custom_apps
+      - nextcloudconfig:/var/www/html/config
+      - nextclouddata:/var/www/html/data
+    depends_on: 
+      - nextcloud
 
 volumes:
   nextcloud:

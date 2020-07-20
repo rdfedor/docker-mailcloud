@@ -1,11 +1,24 @@
 'use strict';
 
-var dbm;
-var type;
-var seed;
-var fs = require('fs');
-var path = require('path');
-var Promise;
+const fs = require('fs')
+const path = require('path')
+const { b64_sha512crypt } = require('sha512crypt-node')
+const { randomBytes } = require('crypto')
+const { readFile } = require('fs')
+const { promisify } = require('util')
+const readFileAsync = promisify(readFile)
+
+let dbm
+let type
+let seed
+let Promise
+
+
+const genRandomString = (length) => {
+  return randomBytes(Math.ceil(length / 2))
+    .toString('hex') /** convert to hexadecimal format */
+    .slice(0, length) /** return required number of characters */
+}
 
 /**
   * We receive the dbmigrate dependency from dbmigrate initially.
@@ -18,22 +31,31 @@ exports.setup = function(options, seedLink) {
   Promise = options.Promise;
 };
 
-exports.up = function(db) {
-  var filePath = path.join(__dirname, 'sqls', '20200706032804-initial-up.sql');
-  return new Promise( function( resolve, reject ) {
-    fs.readFile(filePath, {encoding: 'utf-8'}, function(err,data){
-      if (err) return reject(err);
-      console.log('received data: ' + data);
+exports.up = async (db) => {
+  const filePath = path.join(__dirname, 'sqls', '20200706032804-initial-up.sql')
+  const adminEmail = `postmaster-${genRandomString(5)}`
+  const password = genRandomString(32)
 
-      resolve(data);
-    });
-  })
-  .then(function(data) {
-    return db.runSql(data);
-  });
+  const sql = await readFileAsync(filePath, { encoding: 'utf-8' })
+  const domain = process.env.DOMAINNAME || 'mailinabox.lan'
+
+  await db.runSql(
+    sql
+      .replace(/%domain%/g, domain)
+      .replace(/%adminEmail%/g, adminEmail)
+      .replace(/%postmasterAddress%/g, process.env.POSTMASTER_ADDRESS || 'postmaster@mailinabox.lan')
+      .replace(/%password%/g, b64_sha512crypt(password, genRandomString(16))),
+  )
+
+  console.log('-----------------------------------------------------------------')
+  console.log(`-- Postmaster mailbox credentials,`)
+  console.log('-- This will only be shown once, please record this and store in')
+  console.log('-- a safe place')
+  console.log(`-- { "email" : "${`${adminEmail}@${domain}`}", "password": "${password}" }`)
+  console.log('-----------------------------------------------------------------')
 };
 
-exports.down = function(db) {
+exports.down = (db) => {
   var filePath = path.join(__dirname, 'sqls', '20200706032804-initial-down.sql');
   return new Promise( function( resolve, reject ) {
     fs.readFile(filePath, {encoding: 'utf-8'}, function(err,data){

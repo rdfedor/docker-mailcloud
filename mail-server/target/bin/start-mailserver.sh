@@ -764,10 +764,9 @@ function _setup_dovecot_sql() {
 	# Update /etc/dovecot/dovecot-sql.conf.ext configuration for sql
 	sed -i "s/^#\?driver =.*$/driver = $SQL_DRIVER/g" /etc/dovecot/dovecot-sql.conf.ext
 	sed -i "s/^#\?connect =.*$/connect = ${SQL_CONNECT//\//\\/}/g" /etc/dovecot/dovecot-sql.conf.ext
-	sed -i "s/^#\?default_pass_scheme =.*$/default_pass_scheme = SHA512-CRYPT/g" /etc/dovecot/dovecot-sql.conf.ext
-	sed -i "s/^#\?password_query =.*$/password_query = SELECT email as user, password FROM users WHERE email=\"%u\";/" /etc/dovecot/dovecot-sql.conf.ext
-	sed -i "s/^#\?user_query =.*$/user_query = SELECT email AS user, \"docker\" as uid, \"docker\" as gid, \"\/var\/mail\/%d\/%n\" as home, \"*:bytes=\" || quota AS quota_rule FROM users WHERE email=\"%u\";/" /etc/dovecot/dovecot-sql.conf.ext
-	sed -i "s/^#\?iterate_query =.*$/iterate_query = SELECT email AS user FROM users;/" /etc/dovecot/dovecot-sql.conf.ext
+	sed -i "s/^#\?password_query =.*$/password_query = SELECT email as user, password FROM accounts WHERE email=\"%u\";/" /etc/dovecot/dovecot-sql.conf.ext
+	sed -i "s/^#\?user_query =.*$/user_query = SELECT email AS user, \"docker\" as uid, \"docker\" as gid, \"\/var\/mail\/%d\/%n\" as home, \"*:bytes=\" || quota AS quota_rule FROM accounts WHERE email=\"%u\";/" /etc/dovecot/dovecot-sql.conf.ext
+	sed -i "s/^#\?iterate_query =.*$/iterate_query = SELECT email AS user FROM accounts;/" /etc/dovecot/dovecot-sql.conf.ext
 
 	# Postfix will query the exact address first, where the priority will be alias
 	# records first, then user records. If there are no matches for the exact
@@ -776,19 +775,19 @@ function _setup_dovecot_sql() {
 	# take the value from the destination column.
 	cat > /etc/postfix/sender-login-maps.cf << EOF;
 dbpath=$SQL_CONNECT
-query = SELECT permitted_senders FROM (SELECT permitted_senders, 0 AS priority FROM aliases WHERE source='%s' AND permitted_senders IS NOT NULL UNION SELECT destination AS permitted_senders, 1 AS priority FROM aliases WHERE source='%s' AND permitted_senders IS NULL UNION SELECT email as permitted_senders, 2 AS priority FROM users WHERE email='%s') ORDER BY priority LIMIT 1;
+query = SELECT permitted_senders FROM (SELECT permitted_senders, 0 AS priority FROM aliases WHERE source='%s' AND permitted_senders IS NOT NULL UNION SELECT destination AS permitted_senders, 1 AS priority FROM aliases WHERE source='%s' AND permitted_senders IS NULL UNION SELECT email as permitted_senders, 2 AS priority FROM accounts WHERE email='%s') ORDER BY priority LIMIT 1;
 EOF
 
 	# SQL statement to check if we handle incoming mail for a domain, either for users or aliases.
 	cat > /etc/postfix/virtual-mailbox-domains.cf << EOF;
 dbpath=$SQL_CONNECT
-query = SELECT 1 FROM users WHERE email LIKE '%%@%s' UNION SELECT 1 FROM aliases WHERE source LIKE '%%@%s'
+query = SELECT 1 FROM accounts WHERE email LIKE '%%@%s' UNION SELECT 1 FROM aliases WHERE source LIKE '%%@%s'
 EOF
 	# SQL statement to check if we handle incoming mail for a user.
 	cat > /etc/postfix/virtual-mailbox-maps.cf << EOF;
 dbpath=$SQL_CONNECT
 
-query = SELECT 1 FROM users WHERE email='%s'
+query = SELECT 1 FROM accounts WHERE email='%s'
 EOF
 
 	# SQL statement to rewrite an email address if an alias is present.
@@ -817,7 +816,7 @@ EOF
 	# empty destination here so that other lower priority rules might match.
 	cat > /etc/postfix/virtual-alias-maps.cf << EOF;
 dbpath=$SQL_CONNECT
-query = SELECT destination from (SELECT destination, 0 as priority FROM aliases WHERE source='%s' AND destination<>'' UNION SELECT email as destination, 1 as priority FROM users WHERE email='%s') ORDER BY priority LIMIT 1;
+query = SELECT destination from (SELECT destination, 0 as priority FROM aliases WHERE source='%s' AND destination<>'' UNION SELECT email as destination, 1 as priority FROM accounts WHERE email='%s') ORDER BY priority LIMIT 1;
 EOF
 
 	notify 'inf' "Configuring Postfix SQL"

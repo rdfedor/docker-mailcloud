@@ -1,2 +1,2 @@
 DROP TABLE aliases;
-DROP TABLE users;
+DROP TABLE accounts;

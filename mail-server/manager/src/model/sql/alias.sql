@@ -17,3 +17,6 @@ WHERE source = $source;
 -- addAlias
 INSERT INTO aliases(source, destination, permitted_senders)
 VALUES ($source, $destination, $permittedSenders);
+
+-- deleteAlias
+DELETE FROM aliases WHERE source = $source

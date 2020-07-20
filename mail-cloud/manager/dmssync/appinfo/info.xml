@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+
+	<id>dmssync</id>
+	<name>Docker-MailServer Sync</name>
+	<summary>Manages Docker-MailServer mail accounts from Nextcloud user creations, deletions and updates.</summary>
+	<description><![CDATA[Manages DMS-Sync mail accounts from Nextcloud user creations, deletions and updates, using the DMS-Sync API.]]></description>
+	<version>0.0.1</version>
+	<licence>mpl</licence>
+	<author mail="rdfedor@gmail.com" homepage="https://rdfedor.gitlab.io/">Roger Fedor</author>
+	<namespace>DMSSync</namespace>
+	<category>integration</category>
+	<bugs>https://rdfedor.gitlab.io/</bugs>
+
+	<dependencies>
+		<nextcloud min-version="18" max-version="20"/>
+	</dependencies>
+
+	<settings>
+		<admin>OCA\DMSSync\Settings\AdminSettings</admin>
+	</settings>
+
+</info>

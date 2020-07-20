@@ -1,0 +1,15 @@
+/*
+ * settings.css
+ * Copyright 2020 eth0 <ethernet.zero@gmail.com>
+ * 
+ * This work is free. You can redistribute it and/or modify it under the terms of
+ * the Mozilla Public License 2.0. See the COPYING file for more details.
+ */
+
+#dmsPasskey { width: 32em; }
+
+#dmsHost, #dmsPasskey {
+    display: inline-block;
+    width: 10em;
+
+}

@@ -4,7 +4,7 @@ import {
   DMS_POSTFIX_ALIASES,
 } from "../config"
 import { readFileSync } from "fs"
-import { softUpdateUserPassword, softUpdateUserQuota } from './user'
+import { softUpdateAccountPassword, softUpdateAccountQuota } from './account'
 import { softUpdateAlias } from './alias'
 import { Watch } from "../util"
 
@@ -22,7 +22,7 @@ export const DmsSync = function() {
             .filter(Boolean)
             .map((row) => {
               const [email, password] = row.split('|')
-              return softUpdateUserPassword(email, password)
+              return softUpdateAccountPassword(email, password)
             }))
             console.log('Account sync completed')
           } catch (err) {
@@ -39,7 +39,7 @@ export const DmsSync = function() {
           .filter(Boolean)
           .map((row) => {
             const [email, quota] = row.split(":")
-            return softUpdateUserQuota(email, quota)
+            return softUpdateAccountQuota(email, quota)
           })
       }
     )

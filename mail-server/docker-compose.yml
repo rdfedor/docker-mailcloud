@@ -2,7 +2,7 @@ version: '3'
 services:
   mail:
     build: ./mail-server/.
-    hostname: ${MAIL_HOSTNAME}
+    hostname: ${HOSTNAME}
     domainname: ${DOMAINNAME}
     container_name: mail-server
     ports:
@@ -34,9 +34,9 @@ services:
       - maildata:/var/mail
       - ./mail-server/config/:/tmp/docker-mailserver/
     environment:
-      - VIRTUAL_HOST=api.${MAIL_HOSTNAME}.${DOMAINNAME}
+      - VIRTUAL_HOST=api.${HOSTNAME}.${DOMAINNAME}
       - VIRTUAL_PORT=8080
-      - LETSENCRYPT_HOST=api.${MAIL_HOSTNAME}.${DOMAINNAME}
+      - LETSENCRYPT_HOST=api.${HOSTNAME}.${DOMAINNAME}
       - LETSENCRYPT_EMAIL=support@${DOMAINNAME}
     env_file:
       - .env
@@ -49,15 +49,15 @@ services:
   autodiscovery:
     image: jsmitsnl/docker-email-autodiscover:latest
     hostname: autodiscover
-    domainname: ${MAIL_HOSTNAME}.${DOMAINNAME}
+    domainname: ${HOSTNAME}.${DOMAINNAME}
     container_name: mail-autodiscover
     restart: always
     environment:
-    - DOMAIN=autodiscover.${MAIL_HOSTNAME}.${DOMAINNAME}
-    - IMAP_HOST=${MAIL_HOSTNAME}.${DOMAINNAME}
-    - SMTP_HOST=${MAIL_HOSTNAME}.${DOMAINNAME}
-    - VIRTUAL_HOST=autoconfig.${MAIL_HOSTNAME}.${DOMAINNAME},autodiscover.${MAIL_HOSTNAME}.${DOMAINNAME}
-    - LETSENCRYPT_HOST=autoconfig.${MAIL_HOSTNAME}.${DOMAINNAME},autodiscover.${MAIL_HOSTNAME}.${DOMAINNAME}
+    - DOMAIN=autodiscover.${HOSTNAME}.${DOMAINNAME}
+    - IMAP_HOST=${HOSTNAME}.${DOMAINNAME}
+    - SMTP_HOST=${HOSTNAME}.${DOMAINNAME}
+    - VIRTUAL_HOST=autoconfig.${HOSTNAME}.${DOMAINNAME},autodiscover.${HOSTNAME}.${DOMAINNAME}
+    - LETSENCRYPT_HOST=autoconfig.${HOSTNAME}.${DOMAINNAME},autodiscover.${HOSTNAME}.${DOMAINNAME}
     - LETSENCRYPT_EMAIL=support@${DOMAINNAME}
     networks:
     - proxy-tier

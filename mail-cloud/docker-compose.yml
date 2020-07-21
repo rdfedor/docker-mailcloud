@@ -56,6 +56,9 @@ services:
     cap_add:
       - MKNOD
     tty: true
+    networks:
+      - proxy-tier
+      - default
 
   nextcloud-manager:
     build: ./mail-cloud/manager

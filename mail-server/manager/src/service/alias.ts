@@ -45,12 +45,14 @@ export const getAliases = async () => {
 
 export const getAliasBySource = async $source => {
   const alias = await get(getAliasBySourceSql, { $source })
-  if (alias.destination) {
+
+  if (alias && alias.destination) {
     alias.destination = alias.destination.split(',')
   }
-  if (alias.destination instanceof String) {
+  if (alias && alias.destination instanceof String) {
     alias.destination = [alias.destination]
   }
+
   return alias
 }
 
@@ -101,7 +103,7 @@ export const processRemoveAlias = async (source, destination = '') => {
   await updateAliasBySource(source, updatedDestinations)
 }
 
-export const processAddAlias = async (source, destination) => {
+export const processAddAlias = async (source, destination, permittedSenders) => {
   if (!source || !destination) {
     throw new MissingParameterError('Missing source and/or destination attributes')
   }
@@ -112,10 +114,10 @@ export const processAddAlias = async (source, destination) => {
     throw new ConflictError('Alias by that source already exists')
   }
 
-  await addAlias(source, [destination])
+  await addAlias(source, [destination], permittedSenders)
 }
 
-export const processUpdateAlias = async (source, destination) => {
+export const processUpdateAlias = async (source, destination, permittedSenders) => {
   if (!source || !destination) {
     throw new MissingParameterError('Missing source and/or destination attributes')
   }
@@ -134,5 +136,5 @@ export const processUpdateAlias = async (source, destination) => {
 
   destinations.push(destination)
 
-  await updateAliasBySource(source, destinations)
+  await updateAliasBySource(source, destinations, permittedSenders)
 }

@@ -20,11 +20,11 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   try {
-    const { source, destination } = req.body
+    const { source, destination, permittedSenders } = req.body
 
-    console.log(`Add Alias ${JSON.stringify({ source, destination})} [${req.jwt.domain}]`)
+    console.log(`Add Alias ${JSON.stringify({ source, destination, permittedSenders })} [${req.jwt.domain}]`)
 
-    processAddAlias(source, destination)
+    processAddAlias(source, destination, permittedSenders)
     res.status(200).send()
   } catch (err) {
     next(err)
@@ -33,11 +33,11 @@ router.post('/', async (req, res, next) => {
 
 router.put('/', async (req, res, next) => {
   try {
-    const { source, destination } = req.body
+    const { source, destination, permittedSenders } = req.body
 
-    console.log(`Update Alias ${JSON.stringify({ source, destination })} [${req.jwt.domain}]`)
+    console.log(`Update Alias ${JSON.stringify({ source, destination, permittedSenders })} [${req.jwt.domain}]`)
 
-    await processUpdateAlias(source, destination)
+    await processUpdateAlias(source, destination, permittedSenders)
 
     res.status(200).send()
   } catch (err) {

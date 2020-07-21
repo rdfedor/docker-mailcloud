@@ -46,8 +46,8 @@ services:
       - default
     environment:
       - VIRTUAL_PORT=9980
-      - VIRTUAL_HOST=office.${DOMAINNAME}
-      - LETSENCRYPT_HOST=office.${DOMAINNAME}
+      - VIRTUAL_HOST=office.cloud.${DOMAINNAME}
+      - LETSENCRYPT_HOST=office.cloud.${DOMAINNAME}
       - LETSENCRYPT_EMAIL=support@${DOMAINNAME}
       - domain=cloud.${DOMAINNAME}
       - dictionaries=en

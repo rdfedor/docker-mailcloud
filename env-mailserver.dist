@@ -33,7 +33,7 @@ PERMIT_DOCKER=
 # modern => Enables TLSv1.2 and modern ciphers only. (default)
 # intermediate => Enables TLSv1, TLSv1.1 and TLSv1.2 and broad compatibility ciphers.
 # old => NOT implemented. If you really need it, then customize the TLS ciphers overriding postfix and dovecot settings
-#        (https://github.com/CoderNemesis	RIP	2514	14,394	1806	4,209	2541	4,562tomav/docker-mailserver/wiki/)
+#        (https://github.com/tomav/docker-mailserver/wiki/)
 TLS_LEVEL=
 
 # Configures the handling of creating mails with forged sender addresses.
@@ -81,7 +81,7 @@ SMTP_ONLY=
 # custom => Enables custom certificates
 # manual => Let's you manually specify locations of your SSL certificates for non-standard cases
 # self-signed => Enables self-signed certificates
-SSL_TYPE=
+SSL_TYPE=letsencrypt
 
 # Set how many days a virusmail will stay on the server before being deleted
 # empty => 7 days
@@ -100,7 +100,7 @@ ENABLE_POSTFIX_VIRTUAL_TRANSPORT=
 # `lmtp:<kopano-host>:2003` (use kopano as mailstore)
 # etc.
 POSTFIX_DAGENT=
-CoderNemesis	RIP	2514	14,394	1806	4,209	2541	4,562
+
 # Set the mailbox size limit for all users. If set to zero, the size will be unlimited (default).
 #
 # empty => 0
@@ -208,16 +208,15 @@ FETCHMAIL_POLL=300
 # --------------------- SQL Section -------------------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------------------------------------------------------
 
-ENABLE_SQL=0
+ENABLE_SQL=1
 
 # The driver used to connect with the remote database
-# empty => sqlite
 # Available: sqlite, mariadb, mysql, postgresql
-SQL_DRIVER=
+SQL_DRIVER=sqlite
 
 # The connection details used to connect with the remote database
 # empty => /var/mail/database.sqlite
-SQL_CONNECT=
+SQL_CONNECT=/var/mail/database.sqlite
 
 # -----------------------------------------------------------------------------------------------------------------------------
 # --------------------- LDAP section ------------------------------------------------------------------------------------------
@@ -289,9 +288,9 @@ DOVECOT_MAILBOX_FORMAT=maildir
 # ---------------- Postgrey section -------------------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------------------------------------------------------
 
-ENABLE_POSTGREY=0
+ENABLE_POSTGREY=1
 # greylist for N seconds
-POSTGREY_DELAY=300
+POSTGREY_DELAY=60
 # delete entries older than N days since the last time that they have been seen
 POSTGREY_MAX_AGE=35
 # response when a mail is greylisted

@@ -52,7 +52,6 @@ services:
       - LETSENCRYPT_EMAIL=support@${DOMAINNAME}
       - domain=cloud.${DOMAINNAME}
       - dictionaries=en
-      - extra_params=--o:ssl.enable=false
     cap_add:
       - MKNOD
     tty: true

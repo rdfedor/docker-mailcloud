@@ -4,7 +4,7 @@ services:
     build: ./mail-server/.
     hostname: ${MAIL_HOSTNAME}
     domainname: ${DOMAINNAME}
-    container_name: ${MAIL_CONTAINER_NAME}
+    container_name: mail-server
     ports:
     - 25:25
     - 143:143

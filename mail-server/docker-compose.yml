@@ -6,7 +6,7 @@ services:
     domainname: ${DOMAINNAME}
     container_name: mail-server
     ports:
-    - 25:25
+    - "25:25"
     - 143:143
     - 587:587
     - 993:993

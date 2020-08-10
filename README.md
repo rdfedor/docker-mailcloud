@@ -144,7 +144,7 @@ Provides a cloud storage platform for storage and sharing files provided by [nex
 
 A container which handles the customizations to the nextcloud-web container.  It handles the download and installation of [RainLoop](https://www.rainloop.net/) and the installation of the dms-sync service that allows emails to be managed through the nextcloud service.  The dms-sync service handles the synchronization of the nextcloud user management and the email service. Creating a new user will make a request to mailmanager to create a new email based on the account's username@example.com.  The domain used to create the accounts are defined in Additional Settings > dms-sync.  Also handles synchronizing the passwords between nextcloud and mail-server.
 
-### nextcloud-collabora (office.cloud.${DOMAINNAME})
+### nextcloud-collabora (office.cloud.$DOMAINNAME)
 
 Provides support for a browser based office suite to handle writing documents, creating spreadsheets and presentations.
 

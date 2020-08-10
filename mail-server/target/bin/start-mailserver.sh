@@ -457,7 +457,7 @@ function _setup_default_vars() {
 	DEFAULT_VARS["POSTMASTER_ADDRESS"]="${POSTMASTER_ADDRESS:=postmaster@${DOMAINNAME}}"
 
 	# update REPORT_SENDER - must be done done after _check_hostname()
-	DEFAULT_VARS["REPORT_SENDER"]="${REPORT_SENDER:=mailserver-report@${HOSTNAME}}"
+	DEFAULT_VARS["REPORT_SENDER"]="${REPORT_SENDER:=mailserver-report@mail}"
 	DEFAULT_VARS["PFLOGSUMM_SENDER"]="${PFLOGSUMM_SENDER:=${REPORT_SENDER}}"
 
 	# set PFLOGSUMM_TRIGGER here for backwards compatibility

@@ -94,16 +94,19 @@ SUBCOMMANDS:
     $0 email list
 
   alias:
+
     $0 alias add <email> <recipient>
     $0 alias del <email> <recipient>
     $0 alias list
 
   quota:
+
     $0 quota set <email> [<quota>]
     $0 quota del <email>
 
   config:
 
+    $0 config generate-dkim-domain <domain>
     $0 config dkim <keysize> (default: 2048)
     $0 config ssl <fqdn>
 
@@ -277,6 +280,9 @@ case $1 in
   config)
     shift
     case $1 in
+      generate-dkim-domain)
+        _docker_image generate-dkim-domain "$2"
+        ;;
       dkim)
         _docker_image generate-dkim-config $2
         ;;

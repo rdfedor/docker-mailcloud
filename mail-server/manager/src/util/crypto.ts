@@ -1,6 +1,7 @@
 import { PEM_PUBLIC_KEY, PEM_PRIVATE_KEY } from '../config'
 import { randomBytes, generateKeyPair, createHash } from 'crypto'
-import { writeFile, readFile, exists } from 'fs'
+import { writeFile, readFile, exists, existsSync, mkdirSync } from 'fs'
+import { dirname } from 'path'
 import { promisify } from 'util'
 import { b64_sha512crypt } from 'sha512crypt-node'
 
@@ -40,6 +41,10 @@ export const generatePemKeys = async () => {
       passphrase: '',
     },
   })
+
+  if (!existsSync(dirname(PEM_PRIVATE_KEY))) {
+    mkdirSync(dirname(PEM_PRIVATE_KEY))
+  }
 
   await writeFileAsync(PEM_PUBLIC_KEY, publicKey)
   await writeFileAsync(PEM_PRIVATE_KEY, privateKey)

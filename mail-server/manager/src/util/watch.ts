@@ -1,4 +1,5 @@
 import fs from "fs"
+import { dirname } from "path"
 import md5 from "md5"
 
 /**
@@ -16,6 +17,13 @@ export const Watch = function (path, options = {}, callback = false) {
   if (options instanceof Function) {
     this.options = { interval: 1000 }
     this.callback = options
+  }
+
+  if (!fs.existsSync(path)) {
+    const dirPath = dirname(path)
+    if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath)
+
+    fs.writeFileSync(path, '')
   }
 
   this.handler = null

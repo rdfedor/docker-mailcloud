@@ -53,6 +53,8 @@ Adding the other dns records to help with discovery,
 "TXT"   "" "v=spf1 mx ~all" "300"
 ```
 
+There will need to be an additional record added during setup under the section Generate DKIM for Domain.
+
 ## Setup
 
 1. Copy the distribution env and env-mailserver file,

@@ -94,6 +94,12 @@ cd ./mail-server/config/opendkim/keys/example.com
 
 The contents of mail.txt should added to your the domain's dns records.
 
+### Managing Through Postman
+
+Checked into the repository are two files, [postman_collection.json](./postman_collection.json) and [postman_environment.json](./postman_environment.json) which can be loaded into [Postman](https://www.postman.com/) to help configure the email server.  It supports crud operations to manage email aliases, accounts and managing api keys.
+
+After importing the collection and environment files, remember to update the postman environment with the location of the api and api credentials that were displayed during first start.  Once those are set, the credentials can be validated by navigating to the Authentication folder and run the Verify API Credentials request.
+
 ### Finish Nextcloud Installation
 
 Navigate to cloud.$DOMAINNAME and follow the setup process finalize the installation.  When asked about installing the default set of apps for email, calendar, contancts and collabora online select yes.
@@ -108,15 +114,15 @@ TODO: Add more details  rainloop integration.
 
 ### nginx-proxy
 
-A reverse proxy which routes incoming requests on port 80 (http) and 443 (ssl) to their respective docker containers based on the domain name.  Builds (./proxy)[./proxy] and is based on (jwilder/nginx-proxy:alpine)[https://github.com/nginx-proxy/nginx-proxy], it uses the environmental variables to define the domain routed to a container via the VIRTUAL_HOST and VIRTUAL_PORT.
+A reverse proxy which routes incoming requests on port 80 (http) and 443 (ssl) to their respective docker containers based on the domain name.  Builds [./proxy](./proxy) and is based on [jwilder/nginx-proxy:alpine](https://github.com/nginx-proxy/nginx-proxy), it uses the environmental variables to define the domain routed to a container via the VIRTUAL_HOST and VIRTUAL_PORT.
 
 ### letsencrypt-companion
 
-Provides automated generation of LetsEncrypt certificates for secure transfer of data over ssl through the nginx-proxy companion container (jrcs/letsencrypt-nginx-proxy-companion)[https://github.com/nginx-proxy/docker-letsencrypt-nginx-proxy-companion].  LetsEncrypt details are confingured via the LETSENCRYPT_HOST and LETSENCRYPT_EMAIL variables.  The LETSENCRYPT_HOST should match the VIRTUAL_HOST for the nginx-proxy.
+Provides automated generation of LetsEncrypt certificates for secure transfer of data over ssl through the nginx-proxy companion container [jrcs/letsencrypt-nginx-proxy-companion](https://github.com/nginx-proxy/docker-letsencrypt-nginx-proxy-companion).  LetsEncrypt details are confingured via the LETSENCRYPT_HOST and LETSENCRYPT_EMAIL variables.  The LETSENCRYPT_HOST should match the VIRTUAL_HOST for the nginx-proxy.
 
 ### mail-server (mail.$DOMAINNAME)
 
-A modified version of (docker-mailserver)[https://github.com/tomav/docker-mailserver] that provides support to pull account and alias configuration details from a sql backend rather than file based configuration.  The env-mailserver contains the environmental variables used to configure the docker-mailserver container.
+A modified version of [docker-mailserver](https://github.com/tomav/docker-mailserver) that provides support to pull account and alias configuration details from a sql backend rather than file based configuration.  The env-mailserver contains the environmental variables used to configure the docker-mailserver container.  To understand and customize the configuration of the container, additional documentation is available in the [docker-mailserver README.md](https://github.com/tomav/docker-mailserver/blob/master/README.md) and the [docker-mailserver wiki](https://github.com/tomav/docker-mailserver/wiki)
 
 ### mailmanager (api.mail.$DOMAINNAME)
 
@@ -132,11 +138,11 @@ A service using image jsmitsnl/docker-email-autodiscover:latest, it provides aut
 
 ### nextcloud-web (cloud.$DOMAINNAME)
 
-Provides a cloud storage platform for storage and sharing files provided by (nextcloud:fpm-alpine)[https://hub.docker.com/_/nextcloud/] that integrates a calendar, contacts list and browser based email client.
+Provides a cloud storage platform for storage and sharing files provided by [nextcloud:fpm-alpine](https://hub.docker.com/_/nextcloud/) that integrates a calendar, contacts list and browser based email client.
 
 ### nextcloud-manager
 
-A container which handles the customizations to the nextcloud-web container.  It handles the download and installation of (RainLoop)[https://www.rainloop.net/] and the installation of the dms-sync service that allows emails to be managed through the nextcloud service.  The dms-sync service handles the synchronization of the nextcloud user management and the email service. Creating a new user will make a request to mailmanager to create a new email based on the account's username@example.com.  The domain used to create the accounts are defined in Additional Settings > dms-sync.  Also handles synchronizing the passwords between nextcloud and mail-server.
+A container which handles the customizations to the nextcloud-web container.  It handles the download and installation of [RainLoop](https://www.rainloop.net/) and the installation of the dms-sync service that allows emails to be managed through the nextcloud service.  The dms-sync service handles the synchronization of the nextcloud user management and the email service. Creating a new user will make a request to mailmanager to create a new email based on the account's username@example.com.  The domain used to create the accounts are defined in Additional Settings > dms-sync.  Also handles synchronizing the passwords between nextcloud and mail-server.
 
 ### nextcloud-collabora (office.cloud.${DOMAINNAME})
 

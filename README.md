@@ -2,6 +2,16 @@
 
 Docker-MailCloud is an all-in-one productivity suite that provides an email services, file storage, office suite, calendar, contact manager and integrated mail client.  
 
+## Features
+
+    * Modified docker-mailserver
+        * Added SQL Support
+    * MailManager API
+    * Nextcloud 19
+        * DMS-Sync Custom MailManager Integration
+        * Rainloop
+        * Collabora Online Development Edition
+
 ## Minimum Suggest Host Requirements
 
 This project, with the given configuration can be ran on a 1 vcpu, 1Gb RAM server.  Some of the services such as mail-server's clamd anti-virus consume a considerable amount of memory and because of this, a 2Gb swap is suggested but even though it occasionally runs out of memory.  The following services should be installed on the host machine,
@@ -108,9 +118,16 @@ Navigate to cloud.$DOMAINNAME and follow the setup process finalize the installa
 
 Once logged in, navigate to Apps from the user menu in the upper right.  Disable the Email app and enable the dms-sync and RainLoop apps.
 
-Go back to the upper right and select settings from the user menu. Scroll to the button to Additional Settings and for the API domain enter https://api.mail.$DOMAINNAME along with the api credentials recorded from the previous steps, default domain and quota. 
+Go back to the upper right and select settings from the user menu. Scroll down to Administration and select Collabora Online Development Edition. Select the User your own server radio button and enter https://office.cloud.$DOMAINNAME as the URL and click Save.
 
-TODO: Add more details  rainloop integration.
+From the left menu, scroll to and select Additional Settings from the bottom of the left menu.  Under the DMS-Sync Settings set the API domain enter https://api.mail.$DOMAINNAME along with the api credentials recorded from the previous steps, default domain and quota. 
+
+On the same page, under Rainloop Webmail, click "Go to RainLoop Webmail admin panel" and log in using the credentials admin / 12345.  Navigate to Domains on the left menu and click Add Domain.  Enter these details for the following sections,
+
+Domain: $DOMAINNAME
+IMAP Server: mail.$DOMAINNAME:993 Secure: SSL/TLS
+SMTP Server: mail.$DOMAINNAME:587 Secure: STARTTLS
+Sieve Server: mail.$DOMAINNAME:4190 Secure: STARTTLS
 
 ## Components
 
@@ -148,7 +165,7 @@ A container which handles the customizations to the nextcloud-web container.  It
 
 ### nextcloud-collabora (office.cloud.$DOMAINNAME)
 
-Provides support for a browser based office suite to handle writing documents, creating spreadsheets and presentations.
+Provides support for a browser based rich office suite to handle writing documents, creating spreadsheets and presentations provided by [Collabora Online Development Edition](https://www.collaboraoffice.com/code/).
 
 ## Development
 
@@ -158,6 +175,28 @@ Choose a domain to use for your local development.  For the purpose of this exam
 
 ```
 127.0.0.1   mail.cloudmail.local api.mail.cloudmail.local cloud.cloudmail.local office.cloud.cloudmail.local
+```
+
+### Mail Manager Commands
+
+Each of the following commands should be ran from the `./mail-server/manager` directory.
+
+Install local dependencies,
+
+```
+npm install
+```
+
+Run database migrations (Note: Running database migrations for the first time will generate a unique login and postmaster account),
+
+```
+SQL_DRIVER=sqlite SQL_CONNECT=./database.sqlite npm run migrate
+```
+
+Start development environment,
+
+```
+SQL_DRIVER=sqlite SQL_CONNECT=./database.sqlite npm run start
 ```
 
 ### How-To

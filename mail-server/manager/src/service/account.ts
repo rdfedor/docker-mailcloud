@@ -1,7 +1,8 @@
 import { all, get, prepare } from '../database'
 import models from '../model'
 import { hashPassword } from '../util/crypto'
-import { ConflictError, NotFoundError, MissingParameterError } from '../error'
+import { ConflictError, NotFoundError, MissingParameterError, InvalidParameterError } from '../error'
+import { isEmail } from '../util/validator'
 const {
   getAccountByEmail: getAccountByEmailSql,
   updateAccountPassword: updateAccountPasswordSql,
@@ -14,7 +15,7 @@ const {
 } = models
 
 export const getAccounts = async () => {
-   return await all(getAccountsSql)
+  return await all(getAccountsSql)
 }
 
 export const softUpdateAccountPassword = async (email, password) => {
@@ -45,8 +46,8 @@ export const softUpdateAccountQuota = async (email, quota) => {
 }
 
 export const getAccountByEmail = ($email) => {
-         return get(getAccountByEmailSql, { $email })
-       }
+  return get(getAccountByEmailSql, { $email })
+}
 
 export const updateAccountPassword = ($email, $password) => {
   return prepare(updateAccountPasswordSql, { $email, $password })
@@ -60,7 +61,10 @@ export const updateAccountQuota = ($email, $quota) => {
   return prepare(updateAccountQuotaSql, { $email, $quota })
 }
 
-export const deleteAccount = $email => {
+export const deleteAccount = ($email) => {
+  if (!isEmail($email)) {
+    throw new InvalidParameterError('Invalid email address')
+  }
   return prepare(deleteAccountSql, { $email })
 }
 
@@ -90,33 +94,42 @@ export const updateAccount = ($email, $password, $quota = '1G', $extra = '', $pr
 }
 
 export const processUpdateAccount = async (email, password, quota, extra, privleges) => {
-   if (!email) {
-     throw new MissingParameterError('Missing email attributes')
-   }
-   const storedAccount = await getAccountByEmail(email)
+  if (!email) {
+    throw new MissingParameterError('Missing email attributes')
+  }
 
-   if (!storedAccount || !storedAccount.email) {
-     throw new NotFoundError('Account not found')
-   }
+  if (!isEmail(email)) {
+    throw new InvalidParameterError('Invalid email address')
+  }
 
-   let encryptedPassword = ''
+  const storedAccount = await getAccountByEmail(email)
 
-   if (password) {
-     encryptedPassword = `{SHA512-CRYPT}${hashPassword(password)}`
-   }
+  if (!storedAccount || !storedAccount.email) {
+    throw new NotFoundError('Account not found')
+  }
 
-   await updateAccount(
-     email,
-     encryptedPassword || storedAccount.password,
-     quota || storedAccount.quota,
-     extra || storedAccount.extra,
-     privleges || storedAccount.privleges,
-   )
+  let encryptedPassword = ''
+
+  if (password) {
+    encryptedPassword = `{SHA512-CRYPT}${hashPassword(password)}`
+  }
+
+  await updateAccount(
+    email,
+    encryptedPassword || storedAccount.password,
+    quota || storedAccount.quota,
+    extra || storedAccount.extra,
+    privleges || storedAccount.privleges,
+  )
 }
 
 export const processAddAccount = async (email, password, quota, privleges, extra) => {
   if (!email || !password) {
     throw new MissingParameterError('Missing email and/or password attributes')
+  }
+
+  if (!isEmail(email)) {
+    throw new InvalidParameterError('Invalid email address')
   }
 
   const existingAccount = await getAccountByEmail(email)

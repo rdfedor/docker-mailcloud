@@ -1,6 +1,7 @@
 import { get, prepare, all } from '../database'
 import models from '../model'
-import { ConflictError, NotFoundError, MissingParameterError } from '../error'
+import { ConflictError, NotFoundError, MissingParameterError, InvalidParameterError } from '../error'
+import { isEmail } from '../util/validator'
 
 const {
   getAliasBySource: getAliasBySourceSql,
@@ -118,6 +119,10 @@ export const processRemoveAlias = async (source, destination = '', permittedSend
     throw new MissingParameterError('Missing source attribute')
   }
 
+  if (!isEmail(source)) {
+    throw new InvalidParameterError('Invalid source address')
+  }
+
   const alias = await getAliasBySource(source)
 
   if (!alias) {
@@ -130,6 +135,11 @@ export const processRemoveAlias = async (source, destination = '', permittedSend
   }
 
   if (permittedSenders) {
+
+    if (!isEmail(permittedSenders)) {
+      throw new InvalidParameterError('Invalid permittedSenders address')
+    }
+
     if (alias.permittedSenders.indexOf(permittedSenders) == -1) {
       throw new NotFoundError(`An alias was not found going from ${source} to ${destination} with ${permittedSenders} as a permitted sender.`)
     }
@@ -140,6 +150,10 @@ export const processRemoveAlias = async (source, destination = '', permittedSend
 
     await updateAliasBySource(source, alias.destination, updatedPermittedSenders)
   } else {
+    if (!isEmail(destination)) {
+      throw new InvalidParameterError('Invalid destination address')
+    }
+
     if (alias.destination.indexOf(destination) == -1) {
       throw new NotFoundError(`An alias was not found going from ${source} to ${destination}`)
     }
@@ -160,10 +174,22 @@ export const processAddAlias = async (source, destination, permittedSenders) => 
     throw new MissingParameterError('Missing source and/or destination attributes')
   }
 
+  if (!isEmail(source)) {
+    throw new InvalidParameterError('Invalid source address')
+  }
+
   const alias = await getAliasBySource(source)
 
   if (alias) {
     throw new ConflictError('Alias by that source already exists')
+  }
+
+  if (!isEmail(destination)) {
+    throw new InvalidParameterError('Invalid destination address')
+  }
+
+  if (permittedSenders && !isEmail(permittedSenders)) {
+    throw new InvalidParameterError('Invalid permittedSenders address')
   }
 
   await addAlias(source, destination, permittedSenders)
@@ -174,10 +200,18 @@ export const processUpdateAlias = async (source, destination, permittedSender) =
     throw new MissingParameterError('Missing source and/or destination attributes')
   }
 
+  if (!isEmail(source)) {
+    throw new InvalidParameterError('Invalid source address')
+  }
+
   const alias = await getAliasBySource(source)
 
   if (!alias) {
     throw new NotFoundError('Source not found')
+  }
+
+  if (destination && !isEmail(destination)) {
+    throw new InvalidParameterError('Invalid source address')
   }
 
   const destinations = alias.destination

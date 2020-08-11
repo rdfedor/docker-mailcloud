@@ -124,10 +124,12 @@ From the left menu, scroll to and select Additional Settings from the bottom of 
 
 On the same page, under Rainloop Webmail, click "Go to RainLoop Webmail admin panel" and log in using the credentials admin / 12345.  Navigate to Domains on the left menu and click Add Domain.  Enter these details for the following sections,
 
+```
 Domain: $DOMAINNAME
 IMAP Server: mail.$DOMAINNAME:993 Secure: SSL/TLS
 SMTP Server: mail.$DOMAINNAME:587 Secure: STARTTLS
 Sieve Server: mail.$DOMAINNAME:4190 Secure: STARTTLS
+```
 
 ## Components
 

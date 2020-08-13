@@ -20,9 +20,9 @@ router.post('/', async (req, res, next) => {
   try {
     const { domain } = req.body
 
-    console.log(`Add Api-Key ${JSON.stringify({ domain })} [${req.jwt.domain}]`)
+    console.log(`Add Api-Key ${JSON.stringify({ domain: domain.substr(0, 200) })} [${req.jwt.domain}]`)
 
-    res.status(200).json(await processAddApiKey(domain))
+    res.status(200).json(await processAddApiKey(domain.substr(0, 200)))
   } catch (err) {
     next(err)
   }
@@ -32,9 +32,9 @@ router.delete('/', async (req, res, next) => {
   try {
     const { domain, passkey } = req.body
 
-    console.log(`Delete Api-Key ${JSON.stringify({ domain })} [${req.jwt.domain}]`)
+    console.log(`Delete Api-Key ${JSON.stringify({ domain: domain.substr(0, 200) })} [${req.jwt.domain}]`)
 
-    await processDeleteApiKey(domain, passkey)
+    await processDeleteApiKey(domain.substr(0, 200), passkey.substr(0, 2000))
 
     res.status(200).send()
   } catch (err) {

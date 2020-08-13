@@ -1,6 +1,8 @@
 import { expect } from 'chai'
 import 'mocha'
-import { genRandomString, md5, hashPassword } from '../crypto'
+import { genRandomString, md5, hashPassword, generatePemKeys } from '../crypto'
+import { existsSync, unlinkSync } from 'fs'
+import { PEM_PUBLIC_KEY, PEM_PRIVATE_KEY } from '../../config'
 
 describe('util/crypto', () => {
   it('should generate two random strings', () => {
@@ -32,5 +34,18 @@ describe('util/crypto', () => {
     expect(hash).to.not.equal(string)
     expect(hash.length).to.equal(106)
     expect(hash).to.equal(previousHash)
+  })
+
+  it('should generate PEM keys', async () => {
+    ;[PEM_PUBLIC_KEY, PEM_PRIVATE_KEY]
+      .filter((keyPath) => existsSync(keyPath))
+      .forEach((keyPath) => unlinkSync(keyPath))
+    expect(existsSync(PEM_PUBLIC_KEY)).to.equal(false)
+    expect(existsSync(PEM_PRIVATE_KEY)).to.equal(false)
+
+    const { publicKey, privateKey } = await generatePemKeys()
+
+    expect(publicKey).to.not.equal(null)
+    expect(privateKey).to.not.equal(null)
   })
 })

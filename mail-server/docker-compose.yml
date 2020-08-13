@@ -46,6 +46,11 @@ services:
       - .env
       - env-mailserver
     restart: always
+    healthcheck:
+      test: curl --silent --fail localhost:8080/api/status || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
     networks:
       - proxy-tier
       - default

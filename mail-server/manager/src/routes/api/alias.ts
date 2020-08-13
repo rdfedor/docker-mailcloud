@@ -22,9 +22,15 @@ router.post('/', async (req, res, next) => {
   try {
     const { source, destination, permittedSenders } = req.body
 
-    console.log(`Add Alias ${JSON.stringify({ source, destination, permittedSenders })} [${req.jwt.domain}]`)
+    console.log(
+      `Add Alias ${JSON.stringify({
+        source: source.substr(0, 2000),
+        destination: destination.substr(0, 2000),
+        permittedSenders: permittedSenders.substr(0, 6000),
+      })} [${req.jwt.domain}]`,
+    )
 
-    processAddAlias(source, destination, permittedSenders)
+    processAddAlias(source.substr(0, 2000), destination.substr(0, 2000), permittedSenders.substr(0, 6000))
     res.status(200).send()
   } catch (err) {
     next(err)
@@ -35,9 +41,15 @@ router.put('/', async (req, res, next) => {
   try {
     const { source, destination, permittedSenders } = req.body
 
-    console.log(`Update Alias ${JSON.stringify({ source, destination, permittedSenders })} [${req.jwt.domain}]`)
+    console.log(
+      `Update Alias ${JSON.stringify({
+        source: source.substr(0, 2000),
+        destination: destination.substr(0, 2000),
+        permittedSenders: permittedSenders.substr(0, 6000),
+      })} [${req.jwt.domain}]`,
+    )
 
-    await processUpdateAlias(source, destination, permittedSenders)
+    await processUpdateAlias(source.substr(0, 2000), destination.substr(0, 2000), permittedSenders.substr(0, 6000))
 
     res.status(200).send()
   } catch (err) {
@@ -49,9 +61,16 @@ router.delete('/', async (req, res, next) => {
   try {
     const { source, destination } = req.body
 
-    console.log(`Delete Alias ${JSON.stringify({ source, destination })} [${req.jwt.domain}]`)
+    console.log(
+      `Delete Alias ${JSON.stringify({
+        source: source.substr(0, 2000),
+        destination: destination.substr(0, 2000)
+      })} [${
+        req.jwt.domain
+      }]`,
+    )
 
-    await processRemoveAlias(source, destination)
+    await processRemoveAlias(source.substr(0, 2000), destination.substr(0, 2000))
 
     res.status(200).send()
   } catch (err) {

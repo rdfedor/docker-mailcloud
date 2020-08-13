@@ -12,12 +12,17 @@ const {
 
 export const processGetApiKeys = async () => await all(getManagerApiKeysSql)
 
-export const processVerifyAuth = async ($domain, $passkey) => {
+/**
+ *
+ * @param {String} $domain
+ * @param {String} $passkey
+ */
+export const processVerifyAuth = async ($domain: String, $passkey: String) => {
   if (!$domain || !$passkey) {
     throw new MissingParameterError('Missing parameters domain and/or passkey')
   }
 
-  const apiKeyRecord = await get(getApiKeyByDomainSql, {
+  const apiKeyRecord : { domain: String, passkey: String } = await get(getApiKeyByDomainSql, {
     $domain,
   })
 

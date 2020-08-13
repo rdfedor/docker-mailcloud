@@ -59,4 +59,8 @@ Watch.prototype.stop = function() {
     this.handler = null
 }
 
+Watch.prototype.isRunning = function() {
+  return this.handler !== null
+}
+
 export default Watch

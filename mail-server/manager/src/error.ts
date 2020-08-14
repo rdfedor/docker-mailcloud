@@ -1,6 +1,9 @@
 export const MissingParameterError = class MissingParameterError extends Error {
   status = 400
 }
+export const InvalidParameterError = class InvalidParameterError extends Error {
+  status = 400
+}
 export const AccessDeniedError = class AccessDeniedError extends Error {
   status = 403
 }

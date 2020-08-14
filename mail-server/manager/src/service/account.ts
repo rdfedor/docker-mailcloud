@@ -1,7 +1,8 @@
 import { all, get, prepare } from '../database'
 import models from '../model'
 import { hashPassword } from '../util/crypto'
-import { ConflictError, NotFoundError, MissingParameterError } from '../error'
+import { ConflictError, NotFoundError, MissingParameterError, InvalidParameterError } from '../error'
+import { isEmail } from '../util/validator'
 const {
   getAccountByEmail: getAccountByEmailSql,
   updateAccountPassword: updateAccountPasswordSql,
@@ -14,10 +15,10 @@ const {
 } = models
 
 export const getAccounts = async () => {
-   return await all(getAccountsSql)
+  return await all(getAccountsSql)
 }
 
-export const softUpdateAccountPassword = async (email, password) => {
+export const softUpdateAccountPassword = async (email: String, password: String) => {
   const user = await getAccountByEmail(email)
   if (user && user.email) {
     if (user.password !== password) {
@@ -25,7 +26,7 @@ export const softUpdateAccountPassword = async (email, password) => {
       return await updateAccountPassword(email, password)
     }
 
-    return
+    return user
   }
 
   console.info(`Adding account w/ password for ${email}`)
@@ -33,7 +34,7 @@ export const softUpdateAccountPassword = async (email, password) => {
   return await addAccountPassword(email, password)
 }
 
-export const softUpdateAccountQuota = async (email, quota) => {
+export const softUpdateAccountQuota = async (email: String, quota: String) => {
   const user = await getAccountByEmail(email)
   if (user && user.email) {
     if (user.quota !== quota) {
@@ -44,23 +45,35 @@ export const softUpdateAccountQuota = async (email, quota) => {
   }
 }
 
-export const getAccountByEmail = ($email) => {
-         return get(getAccountByEmailSql, { $email })
-       }
+export const getAccountByEmail = async ($email: String) => {
+  return await get(getAccountByEmailSql, { $email })
+}
 
-export const updateAccountPassword = ($email, $password) => {
+export const updateAccountPassword = ($email: String, $password: String) => {
   return prepare(updateAccountPasswordSql, { $email, $password })
 }
 
-export const addAccountPassword = ($email, $password) => {
+export const addAccountPassword = ($email: String, $password: String) => {
   return prepare(addAccountPasswordSql, { $email, $password })
 }
 
-export const updateAccountQuota = ($email, $quota) => {
+/**
+ * Update's account quota by email address
+ * @param {String} $email Email address
+ * @param {String} $quota Quota of the mailbox (IE 100M, 1G)
+ */
+export const updateAccountQuota = ($email: String, $quota: String) => {
   return prepare(updateAccountQuotaSql, { $email, $quota })
 }
 
-export const deleteAccount = $email => {
+/**
+ * Delete an email address
+ * @param {String} $email Email address of the account to delete
+ */
+export const deleteAccount = ($email: String) => {
+  if (!isEmail($email)) {
+    throw new InvalidParameterError('Invalid email address')
+  }
   return prepare(deleteAccountSql, { $email })
 }
 
@@ -72,7 +85,13 @@ export const deleteAccount = $email => {
  * @param {String} [$extra='']
  * @param {String} [$privileges='']
  */
-export const addAccount = ($email, $password, $quota = '1G', $extra = '', $privileges = '') => {
+export const addAccount = (
+  $email: String,
+  $password: String,
+  $quota: String = '1G',
+  $extra: String = '',
+  $privileges: String = '',
+) => {
   return prepare(addAccountSql, { $email, $password, $extra, $privileges, $quota })
 }
 
@@ -89,34 +108,51 @@ export const updateAccount = ($email, $password, $quota = '1G', $extra = '', $pr
   return prepare(updateAccountSql, { $email, $password, $extra, $privileges, $quota })
 }
 
-export const processUpdateAccount = async (email, password, quota, extra, privleges) => {
-   if (!email) {
-     throw new MissingParameterError('Missing email attributes')
-   }
-   const storedAccount = await getAccountByEmail(email)
+/**
+ * Update the account details of a mailbox
+ * @param {String} email Email address
+ * @param {String} password Password to set for the account
+ * @param {String} quota Quota of the mailbox (100M, 1G)
+ * @param {String} extra
+ * @param {String} privileges
+ */
+export const processUpdateAccount = async (email, password, quota, extra, privileges) => {
+  if (!email) {
+    throw new MissingParameterError('Missing email attributes')
+  }
 
-   if (!storedAccount || !storedAccount.email) {
-     throw new NotFoundError('Account not found')
-   }
+  if (!isEmail(email)) {
+    throw new InvalidParameterError('Invalid email address')
+  }
 
-   let encryptedPassword = ''
+  const storedAccount = await getAccountByEmail(email)
 
-   if (password) {
-     encryptedPassword = `{SHA512-CRYPT}${hashPassword(password)}`
-   }
+  if (!storedAccount || !storedAccount.email) {
+    throw new NotFoundError('Account not found')
+  }
 
-   await updateAccount(
-     email,
-     encryptedPassword || storedAccount.password,
-     quota || storedAccount.quota,
-     extra || storedAccount.extra,
-     privleges || storedAccount.privleges,
-   )
+  let encryptedPassword = ''
+
+  if (password) {
+    encryptedPassword = `{SHA512-CRYPT}${hashPassword(password)}`
+  }
+
+  await updateAccount(
+    email,
+    encryptedPassword || storedAccount.password,
+    quota || storedAccount.quota,
+    extra || storedAccount.extra,
+    privileges || storedAccount.privileges,
+  )
 }
 
-export const processAddAccount = async (email, password, quota, privleges, extra) => {
+export const processAddAccount = async (email, password, quota, privileges, extra) => {
   if (!email || !password) {
     throw new MissingParameterError('Missing email and/or password attributes')
+  }
+
+  if (!isEmail(email)) {
+    throw new InvalidParameterError('Invalid email address')
   }
 
   const existingAccount = await getAccountByEmail(email)
@@ -131,18 +167,27 @@ export const processAddAccount = async (email, password, quota, privleges, extra
     encryptedPassword = `{SHA512-CRYPT}${hashPassword(password)}`
   }
 
-  await addAccount(email, encryptedPassword, quota, extra, privleges)
+  await addAccount(email, encryptedPassword, quota, extra, privileges)
 }
 
+/**
+ * Deletes an account by email
+ * @param {String} email Email address of the accoutn to delete
+ */
 export const processDeleteAccount = async (email) => {
   if (!email) {
-    throw new MissingParameterError('Missing email password attributes')
+    throw new MissingParameterError('Missing email attribute')
   }
+
+  if (!isEmail(email)) {
+    throw new InvalidParameterError('Invalid email address')
+  }
+
   const storedAccount = await getAccountByEmail(email)
 
   if (!storedAccount || !storedAccount.email) {
     throw new NotFoundError('Account not found')
   }
 
-  await deleteAccount(email)
+  return await deleteAccount(email)
 }

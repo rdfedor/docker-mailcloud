@@ -17,7 +17,9 @@ DmsSync.start()
 
 console.info('Loading web')
 
-var app = express()
+export const app = express()
+
+app.disable('x-powered-by')
 
 app.use(bodyParser.json())
 app.use(
@@ -67,5 +69,3 @@ app.listen(MANAGER_PORT, function () {
   console.info('Starting log manager')
   startLogManager()
 })
-
-module.exports = app;

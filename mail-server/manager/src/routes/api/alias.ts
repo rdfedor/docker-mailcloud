@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { getAliases, processRemoveAlias, processUpdateAlias, processAddAlias } from '../../service/alias'
 import verifyJwt from '../../middleware/verify-jwt'
+import { limitString } from '../../util/validator'
 
 const router = new Router()
 
@@ -22,9 +23,19 @@ router.post('/', async (req, res, next) => {
   try {
     const { source, destination, permittedSenders } = req.body
 
-    console.log(`Add Alias ${JSON.stringify({ source, destination, permittedSenders })} [${req.jwt.domain}]`)
+    console.log(
+      `Add Alias ${JSON.stringify({
+        source: limitString(source, 2000, ''),
+        destination: limitString(destination, 2000, ''),
+        permittedSenders: limitString(permittedSenders, 2000, ''),
+      })} [${req.jwt.domain}]`,
+    )
 
-    processAddAlias(source, destination, permittedSenders)
+    await processAddAlias(
+      limitString(source, 2000, ''),
+      limitString(destination, 2000, ''),
+      limitString(permittedSenders, 2000, ''),
+    )
     res.status(200).send()
   } catch (err) {
     next(err)
@@ -35,9 +46,19 @@ router.put('/', async (req, res, next) => {
   try {
     const { source, destination, permittedSenders } = req.body
 
-    console.log(`Update Alias ${JSON.stringify({ source, destination, permittedSenders })} [${req.jwt.domain}]`)
+    console.log(
+      `Update Alias ${JSON.stringify({
+        source: limitString(source, 2000, ''),
+        destination: limitString(destination, 2000, ''),
+        permittedSenders: limitString(permittedSenders, 2000, ''),
+      })} [${req.jwt.domain}]`,
+    )
 
-    await processUpdateAlias(source, destination, permittedSenders)
+    await processUpdateAlias(
+      limitString(source, 2000, ''),
+      limitString(destination, 2000, ''),
+      limitString(permittedSenders, 2000, ''),
+    )
 
     res.status(200).send()
   } catch (err) {
@@ -47,11 +68,21 @@ router.put('/', async (req, res, next) => {
 
 router.delete('/', async (req, res, next) => {
   try {
-    const { source, destination } = req.body
+    const { source, destination, permittedSenders } = req.body
 
-    console.log(`Delete Alias ${JSON.stringify({ source, destination })} [${req.jwt.domain}]`)
+    console.log(
+      `Delete Alias ${JSON.stringify({
+        source: limitString(source, 2000, ''),
+        destination: limitString(destination, 2000, ''),
+        permittedSenders: limitString(destination, 2000, ''),
+      })} [${req.jwt.domain}]`,
+    )
 
-    await processRemoveAlias(source, destination)
+    await processRemoveAlias(
+      limitString(source, 2000, ''),
+      limitString(destination, 2000, ''),
+      limitString(permittedSenders, 2000, ''),
+    )
 
     res.status(200).send()
   } catch (err) {

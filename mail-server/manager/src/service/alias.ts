@@ -1,9 +1,10 @@
 import { get, prepare, all } from '../database'
 import models from '../model'
-import { ConflictError, NotFoundError, MissingParameterError } from '../error'
+import { ConflictError, NotFoundError, MissingParameterError, InvalidParameterError } from '../error'
+import { isEmail } from '../util/validator'
 
 const {
-  getAliasBySource: getAliasBySourceSql,
+  getAliasBySourceDestination: getAliasBySourceDestinationSql,
   updateAliasBySource: updateAliasBySourceSql,
   addAlias: addAliasSql,
   getAliases: getAliasesSql,
@@ -14,7 +15,7 @@ export const ALIAS_DESTINATION_SEPARATOR = ','
 export const ALIAS_PERMITTED_SENDERS_SEPARATOR = ','
 
 export const softUpdateAlias = async (source, destination) => {
-  const alias = await getAliasBySource(source)
+  const alias = await getAliasBySourceDestination(source, destination)
 
   if (alias && alias.source && destination != destination) {
     console.log(`Update Alias ${JSON.stringify({ domain, destination })} [dms-sync]`)
@@ -29,13 +30,12 @@ export const softUpdateAlias = async (source, destination) => {
     console.log(`Update Alias ${JSON.stringify({ domain, destination })} [dms-sync]`)
     return await updateAliasBySource(source, destination)
   }
-
 }
 
-const formatAliasReturnObject = alias => {
+const formatAliasReturnObject = (alias) => {
   if (alias) {
     const newAlias = { ...alias }
-true
+    true
     newAlias.destination = newAlias && newAlias.destination && newAlias.destination.split(ALIAS_DESTINATION_SEPARATOR)
 
     if (newAlias.destination instanceof String) {
@@ -61,8 +61,8 @@ export const getAliases = async () => {
   return aliases.map((alias) => formatAliasReturnObject(alias))
 }
 
-export const getAliasBySource = async $source => {
-  const alias = await get(getAliasBySourceSql, { $source })
+export const getAliasBySourceDestination = async ($source, $destination) => {
+  const alias = await get(getAliasBySourceDestinationSql, { $source, $destination })
   return formatAliasReturnObject(alias)
 }
 
@@ -104,7 +104,7 @@ export const addAlias = async ($source, $destination, $permittedSenders) => {
   })
 }
 
-export const deleteAliasBySource = async $source => {
+export const deleteAliasBySource = async ($source) => {
   return await prepare(deleteAliasSql, { $source })
 }
 
@@ -118,10 +118,14 @@ export const processRemoveAlias = async (source, destination = '', permittedSend
     throw new MissingParameterError('Missing source attribute')
   }
 
-  const alias = await getAliasBySource(source)
+  if (!isEmail(source)) {
+    throw new InvalidParameterError('Invalid source address')
+  }
+
+  const alias = await getAliasBySourceDestination(source, destination)
 
   if (!alias) {
-    throw new NotFoundError('Source not found')
+    throw new NotFoundError('Source and destination not found')
   }
 
   if (!destination && !permittedSenders) {
@@ -130,8 +134,21 @@ export const processRemoveAlias = async (source, destination = '', permittedSend
   }
 
   if (permittedSenders) {
-    if (alias.permittedSenders.indexOf(permittedSenders) == -1) {
-      throw new NotFoundError(`An alias was not found going from ${source} to ${destination} with ${permittedSenders} as a permitted sender.`)
+    if (
+      (permittedSenders instanceof Array && permittedSenders.filter((sender) => !isEmail(sender)).length > 0) ||
+      (permittedSenders instanceof String && !isEmail(permittedSenders))
+    ) {
+      throw new InvalidParameterError('Invalid permittedSenders address')
+    }
+
+    if (
+      (permittedSenders instanceof Array &&
+        permittedSenders.filter(sender => alias.permittedSenders.indexOf(sender) === -1).length > 0) ||
+      (permittedSenders instanceof String && alias.permittedSenders.indexOf(permittedSenders) === -1)
+    ) {
+      throw new NotFoundError(
+        `An alias was not found going from ${source} to ${destination} with ${permittedSenders} as a permitted sender.`,
+      )
     }
 
     const updatedPermittedSenders = alias.permittedSenders.filter(
@@ -140,6 +157,10 @@ export const processRemoveAlias = async (source, destination = '', permittedSend
 
     await updateAliasBySource(source, alias.destination, updatedPermittedSenders)
   } else {
+    if (!isEmail(destination)) {
+      throw new InvalidParameterError('Invalid destination address')
+    }
+
     if (alias.destination.indexOf(destination) == -1) {
       throw new NotFoundError(`An alias was not found going from ${source} to ${destination}`)
     }
@@ -160,10 +181,25 @@ export const processAddAlias = async (source, destination, permittedSenders) => 
     throw new MissingParameterError('Missing source and/or destination attributes')
   }
 
-  const alias = await getAliasBySource(source)
+  if (!isEmail(source)) {
+    throw new InvalidParameterError('Invalid source address')
+  }
+
+  const alias = await getAliasBySourceDestination(source, destination)
 
   if (alias) {
     throw new ConflictError('Alias by that source already exists')
+  }
+
+  if (!isEmail(destination)) {
+    throw new InvalidParameterError('Invalid destination address')
+  }
+
+  if (
+    (permittedSenders instanceof Array && permittedSenders.filter((sender) => !isEmail(sender)).length > 0) ||
+    (permittedSenders instanceof String && !isEmail(permittedSenders))
+  ) {
+    throw new InvalidParameterError('Invalid permittedSenders address')
   }
 
   await addAlias(source, destination, permittedSenders)
@@ -174,10 +210,18 @@ export const processUpdateAlias = async (source, destination, permittedSender) =
     throw new MissingParameterError('Missing source and/or destination attributes')
   }
 
-  const alias = await getAliasBySource(source)
+  if (!isEmail(source)) {
+    throw new InvalidParameterError('Invalid source address')
+  }
+
+  const alias = await getAliasBySourceDestination(source, destination)
 
   if (!alias) {
     throw new NotFoundError('Source not found')
+  }
+
+  if (destination && !isEmail(destination)) {
+    throw new InvalidParameterError('Invalid source address')
   }
 
   const destinations = alias.destination

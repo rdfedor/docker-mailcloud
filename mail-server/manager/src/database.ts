@@ -1,5 +1,7 @@
 import sqlite3 from 'sqlite3'
 import { SQL_CONNECT, LOG_DATABASE_QUERIES } from './config'
+import { registerServiceCheck } from './service/health-check'
+import models from './model'
 
 const sqlite3Verbose = sqlite3.verbose()
 
@@ -61,5 +63,15 @@ export const all = (query, parameters = {}) => {
     })
   })
 }
+
+registerServiceCheck('database', async () => {
+  let status = true
+  try {
+    await get(models.checkHealth)
+  } catch (err) {
+    status = false
+  }
+  return status
+})
 
 export default db

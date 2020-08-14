@@ -7,10 +7,15 @@ import { readFileSync } from "fs"
 import { softUpdateAccountPassword, softUpdateAccountQuota } from './account'
 import { softUpdateAlias } from './alias'
 import { Watch } from "../util"
+import { registerServiceCheck, checkServiceStatus } from "./health-check"
 
 let watchPostfixAccounts = null
 let watchPostfixQuotas = null
 let watchPostfixAliases = null
+
+const HCSM_POSTFIX_ACCOUNTS = 'watch-postfix-accounts'
+const HCSM_POSTFIX_QUOTAS = 'watch-postfix-quotas'
+const HCSM_POSTFIX_ALIASES = 'watch-postfix-alias'
 
 export const DmsSync = function() {
     watchPostfixAccounts = new Watch(
@@ -56,18 +61,36 @@ export const DmsSync = function() {
           })
       }
     )
+
+    registerServiceCheck(HCSM_POSTFIX_ALIASES, () => {
+      return watchPostfixAliases.isRunning()
+    })
+    registerServiceCheck(HCSM_POSTFIX_ACCOUNTS, () => {
+      return watchPostfixAccounts.isRunning()
+    })
+    registerServiceCheck(HCSM_POSTFIX_QUOTAS, () => {
+      return watchPostfixQuotas.isRunning()
+    })
 }
 
 DmsSync.prototype.start = function() {
     watchPostfixAccounts.start()
     watchPostfixQuotas.start()
     watchPostfixAliases.start()
+
+    checkServiceStatus(HCSM_POSTFIX_ALIASES)
+    checkServiceStatus(HCSM_POSTFIX_QUOTAS)
+    checkServiceStatus(HCSM_POSTFIX_ACCOUNTS)
 }
 
 DmsSync.prototype.stop = function () {
     watchPostfixAccounts.stop()
     watchPostfixQuotas.stop()
     watchPostfixAliases.stop()
+
+    checkServiceStatus(HCSM_POSTFIX_ALIASES)
+    checkServiceStatus(HCSM_POSTFIX_QUOTAS)
+    checkServiceStatus(HCSM_POSTFIX_ACCOUNTS)
 }
 
 export default new DmsSync()

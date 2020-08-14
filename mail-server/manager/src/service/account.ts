@@ -26,7 +26,7 @@ export const softUpdateAccountPassword = async (email, password) => {
       return await updateAccountPassword(email, password)
     }
 
-    return
+    return user
   }
 
   console.info(`Adding account w/ password for ${email}`)
@@ -45,8 +45,8 @@ export const softUpdateAccountQuota = async (email, quota) => {
   }
 }
 
-export const getAccountByEmail = ($email) => {
-  return get(getAccountByEmailSql, { $email })
+export const getAccountByEmail = async ($email) => {
+  return await get(getAccountByEmailSql, { $email })
 }
 
 export const updateAccountPassword = ($email, $password) => {

@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { processAddApiKey, processDeleteApiKey, processGetApiKeys } from '../../service/api-key'
 import verifyJwt from '../../middleware/verify-jwt'
+import { limitString } from '../../util/validator'
 
 const router = new Router()
 
@@ -20,9 +21,9 @@ router.post('/', async (req, res, next) => {
   try {
     const { domain } = req.body
 
-    console.log(`Add Api-Key ${JSON.stringify({ domain: domain.substr(0, 200) })} [${req.jwt.domain}]`)
+    console.log(`Add Api-Key ${JSON.stringify({ domain: limitString(domain, 200) })} [${req.jwt.domain}]`)
 
-    res.status(200).json(await processAddApiKey(domain.substr(0, 200)))
+    res.status(200).json(await processAddApiKey(limitString(domain, 200)))
   } catch (err) {
     next(err)
   }
@@ -34,7 +35,7 @@ router.delete('/', async (req, res, next) => {
 
     console.log(`Delete Api-Key ${JSON.stringify({ domain: domain.substr(0, 200) })} [${req.jwt.domain}]`)
 
-    await processDeleteApiKey(domain.substr(0, 200), passkey.substr(0, 2000))
+    await processDeleteApiKey(limitString(domain, 200), limitString(passkey, 2000))
 
     res.status(200).send()
   } catch (err) {

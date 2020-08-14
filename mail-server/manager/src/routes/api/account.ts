@@ -66,9 +66,9 @@ router.delete('/', async (req, res, next) => {
   try {
     const { email } = req.body
 
-    console.log(`Delete Account ${JSON.stringify({ email })} [${req.jwt.domain}]`)
+    console.log(`Delete Account ${JSON.stringify({ email: limitString(email, 2000) })} [${req.jwt.domain}]`)
 
-    await processDeleteAccount(email.substr(0, 2000))
+    await processDeleteAccount(limitString(email, 2000))
 
     res.status(200).send()
   } catch (err) {

@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { getAccounts, processUpdateAccount, processAddAccount, processDeleteAccount } from '../../service/account'
 import verifyJwt from '../../middleware/verify-jwt'
+import { limitString } from '../../util/validator'
 
 const router = new Router()
 
@@ -28,11 +29,11 @@ router.post('/', async (req, res, next) => {
     console.log(`Add Account ${JSON.stringify({ email, quota, privileges, extra })} [${req.jwt.domain}]`)
 
     await processAddAccount(
-      email.substr(0, 2000),
-      password.substr(0, 200),
-      quota.substr(0, 10),
-      privileges.substr(0, 2000),
-      extra.substr(0, 2000),
+      limitString(email, 2000),
+      limitString(password, 200),
+      limitString(quota, 10, '0'),
+      limitString(extra, 2000, ''),
+      limitString(privileges, 2000, ''),
     )
 
     res.status(200).send()
@@ -48,11 +49,11 @@ router.put('/', async (req, res, next) => {
     console.log(`Update Account ${JSON.stringify({ email, quota, privileges, extra })} [${req.jwt.domain}]`)
 
     await processUpdateAccount(
-      email.substr(0, 2000),
-      password.substr(0, 200),
-      quota.substr(0, 10),
-      extra.substr(0, 2000),
-      privileges.substr(0, 2000),
+      limitString(email, 2000),
+      limitString(password, 200),
+      limitString(quota, 10, '0'),
+      limitString(extra, 2000, ''),
+      limitString(privileges, 2000, ''),
     )
 
     res.status(200).send()

@@ -18,7 +18,7 @@ export const getAccounts = async () => {
   return await all(getAccountsSql)
 }
 
-export const softUpdateAccountPassword = async (email, password) => {
+export const softUpdateAccountPassword = async (email: String, password: String) => {
   const user = await getAccountByEmail(email)
   if (user && user.email) {
     if (user.password !== password) {
@@ -34,7 +34,7 @@ export const softUpdateAccountPassword = async (email, password) => {
   return await addAccountPassword(email, password)
 }
 
-export const softUpdateAccountQuota = async (email, quota) => {
+export const softUpdateAccountQuota = async (email: String, quota: String) => {
   const user = await getAccountByEmail(email)
   if (user && user.email) {
     if (user.quota !== quota) {
@@ -45,15 +45,15 @@ export const softUpdateAccountQuota = async (email, quota) => {
   }
 }
 
-export const getAccountByEmail = async ($email) => {
+export const getAccountByEmail = async ($email: String) => {
   return await get(getAccountByEmailSql, { $email })
 }
 
-export const updateAccountPassword = ($email, $password) => {
+export const updateAccountPassword = ($email: String, $password: String) => {
   return prepare(updateAccountPasswordSql, { $email, $password })
 }
 
-export const addAccountPassword = ($email, $password) => {
+export const addAccountPassword = ($email: String, $password: String) => {
   return prepare(addAccountPasswordSql, { $email, $password })
 }
 
@@ -62,7 +62,7 @@ export const addAccountPassword = ($email, $password) => {
  * @param {String} $email Email address
  * @param {String} $quota Quota of the mailbox (IE 100M, 1G)
  */
-export const updateAccountQuota = ($email, $quota) => {
+export const updateAccountQuota = ($email: String, $quota: String) => {
   return prepare(updateAccountQuotaSql, { $email, $quota })
 }
 
@@ -70,7 +70,7 @@ export const updateAccountQuota = ($email, $quota) => {
  * Delete an email address
  * @param {String} $email Email address of the account to delete
  */
-export const deleteAccount = ($email) => {
+export const deleteAccount = ($email: String) => {
   if (!isEmail($email)) {
     throw new InvalidParameterError('Invalid email address')
   }
@@ -85,7 +85,13 @@ export const deleteAccount = ($email) => {
  * @param {String} [$extra='']
  * @param {String} [$privileges='']
  */
-export const addAccount = ($email, $password, $quota = '1G', $extra = '', $privileges = '') => {
+export const addAccount = (
+  $email: String,
+  $password: String,
+  $quota: String = '1G',
+  $extra: String = '',
+  $privileges: String = '',
+) => {
   return prepare(addAccountSql, { $email, $password, $extra, $privileges, $quota })
 }
 
@@ -139,7 +145,6 @@ export const processUpdateAccount = async (email, password, quota, extra, privil
     privileges || storedAccount.privileges,
   )
 }
-
 
 export const processAddAccount = async (email, password, quota, privileges, extra) => {
   if (!email || !password) {

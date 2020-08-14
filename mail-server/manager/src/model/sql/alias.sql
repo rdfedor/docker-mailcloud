@@ -1,12 +1,12 @@
 -- getAliases
 SELECT source, destination, permitted_senders as permittedSenders FROM aliases;
 
--- getAliasBySource
+-- getAliasBySourceDestination
 SELECT source,
   destination,
   permitted_senders as permittedSenders
 FROM aliases
-WHERE source = $source;
+WHERE source = $source AND destination = $destination;
 
 -- updateAliasBySource
 UPDATE aliases

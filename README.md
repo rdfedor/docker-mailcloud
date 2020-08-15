@@ -131,6 +131,14 @@ SMTP Server: mail.$DOMAINNAME:587 Secure: STARTTLS
 Sieve Server: mail.$DOMAINNAME:4190 Secure: STARTTLS
 ```
 
+### Upgrading
+
+Stay current with the latest changes simply by downloading and replacing the local installation with the contents of the repository.  The mail-manager will handle sql migrations from release to release and rebuilding will also update existing images.  So either check the source out from the repository via git, or download a new bundle, and replace the project on the server.  Afterwards, run the following command from the root of the directory,
+
+```
+./rebuild.sh
+```
+
 ## Components
 
 ### nginx-proxy
@@ -199,6 +207,12 @@ Start development environment,
 
 ```
 SQL_DRIVER=sqlite SQL_CONNECT=./database.sqlite npm run start
+```
+
+To rebuild a component within the project, for example the mail-manager,
+
+```
+./rebuild.sh mail-manager
 ```
 
 ### How-To

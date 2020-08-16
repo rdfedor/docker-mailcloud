@@ -1,16 +1,37 @@
 # Docker MailCloud
 
-Docker-MailCloud is an all-in-one productivity suite that provides an email services, file storage, office suite, calendar, contact manager and integrated mail client.  
+Docker-MailCloud is an all-in-one productivity suite that provides an email services, file storage, office suite, calendar, contact manager and integrated mail client.  With addons through Nextcloud's app ecosystem, new features can be added like a self-hosted instant messenging and video conferencing service to an issue tracking system with kan ban board among others. 
 
 ## Features
+
+### Project Customizations
 
     * Modified docker-mailserver
         * Added SQL Support
     * MailManager API
-    * Nextcloud 19
-        * DMS-Sync Custom MailManager Integration
-        * Rainloop
+        * SQL based migrations
+        * Support for managing accounts, aliases and api keys
+    * Nextcloud Hub
+        * Synchronize accounts and passwords with mailserver
+        * Rainloop Webmail Client
         * Collabora Online Development Edition
+
+### Features from Components
+
+    * [docker-mailserver](https://github.com/tomav/docker-mailserver)
+        * Postfix with smtp or ldap auth
+        * Dovecot for sasl, imap (and optional pop3) with ssl support, with ldap auth, sieve and quotas
+        * Spamassasin
+        * ClamAV w/ Auto Updates
+        * Plus addressing routes all extensions you+extension@example.com to you@example.com
+        * Postgrey
+        * Fail2ban
+        * Fetchmail
+        * Sieve support
+    * [Nextcloud Hub](https://nextcloud.com/)
+        * Decentralized groupware solution
+        * Server side encryption for file uploads (enable under settings > admin > security)
+        * Extendable through app ecosystem [https://apps.nextcloud.com/](https://apps.nextcloud.com/)
 
 ## Minimum Suggest Host Requirements
 

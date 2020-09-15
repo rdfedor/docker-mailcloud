@@ -27,7 +27,7 @@ class AdminSettings implements ISettings {
 		'dmsHost' => 'https://mailman.example.com',
 		'dmsApiDomain' => 'domain-12345',
 		'dmsPasskey' => 'Y0UR-4P1-T0K3N',
-		'dmsQuota' => 1024,
+		'dmsQuota' => '1024M',
 		'dmsDomain' => '',
 	];
 

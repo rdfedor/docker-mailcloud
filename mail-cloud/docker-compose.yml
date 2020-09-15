@@ -15,6 +15,7 @@ services:
       - ./mail-cloud/conf/php_max_upload_limit.ini:/usr/local/etc/php/conf.d/zzz-php_max_upload_limit.ini
     environment:
       - SQLITE_DATABASE=nextcloud
+      - OVERWRITEPROTOCOL=https
     networks:
       - default
 

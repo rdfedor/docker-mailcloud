@@ -7,7 +7,6 @@ style('dmssync', 'settings');
 /** @var array $_ */
 
 ?>
-
 <div id="dms-settings" class="section">
     <div id="dms-settings-header">
         <h2><?php p($l->t('DMS Account Sync')); ?></h2>
@@ -34,7 +33,7 @@ style('dmssync', 'settings');
             </p>
             <p>
                 <label for="dmsQuota" style="width:10em;display: inline-block;"><?php p($l->t('New Account Quota')); ?></label>
-                <input type="number" id="dmsQuota" name="dmsQuota" style="width:5em;display: inline-block;" value="<?php p($_['dmsQuota']); ?>" placeholder="<?php p($_['dmsQuota_default']); ?>" />&nbsp;MB
+                <input type="text" id="dmsQuota" name="dmsQuota" style="width:5em;display: inline-block;" value="<?php p($_['dmsQuota']); ?>" placeholder="<?php p($_['dmsQuota_default']); ?>" />&nbsp;(Ex. 1024M, 1G)
             </p>
         </form>
     </div>

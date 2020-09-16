@@ -1,6 +1,6 @@
 #!/bin/sh
 
-RAINLOOP_VERSION=7.0.1
+RAINLOOP_VERSION=7.0.3
 
 echo "Installing DMSSync"
 
@@ -19,11 +19,3 @@ cp -R /tmp/rainloop-nextcloud-${RAINLOOP_VERSION}/* /var/www/html/custom_apps/ra
 echo "Fixing file and folder permissions"
 chown -R 82:82 /var/www/html/custom_apps
 chmod -R a+rx /var/www/html/custom_apps
-
-echo "Starting Patching Service for Rainloop in Nextcloud"
-
-while [ true ]
-do 
-    sed -i "s/return \$sAppPath;/return str_replace\('\/apps\/rainloop\/app', '\/custom_apps\/rainloop\/app', \$sAppPath\);/g" /var/www/html/custom_apps/rainloop/app/rainloop/v/1.14.0/app/libraries/RainLoop/Utils.php
-    sleep 2
-done

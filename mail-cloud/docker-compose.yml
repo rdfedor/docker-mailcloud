@@ -11,11 +11,18 @@ services:
       - nextcloudapps:/var/www/html/custom_apps
       - nextcloudconfig:/var/www/html/config
       - nextclouddata:/var/www/html/data
-      - DOMAIN=${DOMAINNAME}
       - ./mail-cloud/conf/php_max_upload_limit.ini:/usr/local/etc/php/conf.d/zzz-php_max_upload_limit.ini
     environment:
       - SQLITE_DATABASE=nextcloud
       - OVERWRITEPROTOCOL=https
+      - REDIS_HOST=nextcloud-redis
+      - REDIS_HOST_PASSWORD=IrrelevantRedisPasswordSinceItsInternalOnly
+      - DOMAIN=${DOMAINNAME}
+      - SMTP_HOST=mail-server
+      - SMTP_PORT=25
+      - NEXTCLOUD_TRUSTED_DOMAINS=cloud.${DOMAINNAME}
+    depends_on:
+      - redis
     networks:
       - default
 
@@ -37,6 +44,27 @@ services:
       - nextcloud
     networks:
       - proxy-tier
+      - default
+
+  cron:
+    image: nextcloud:fpm-alpine
+    container_name: nextcloud-cron
+    restart: always
+    volumes:
+      - nextcloud:/var/www/html
+      - nextcloudapps:/var/www/html/custom_apps
+      - nextcloudconfig:/var/www/html/config
+      - nextclouddata:/var/www/html/data
+    entrypoint: /cron.sh
+    depends_on:
+      - redis
+
+  redis:
+    container_name: nextcloud-redis
+    command: redis-server --requirepass IrrelevantRedisPasswordSinceItsInternalOnly
+    image: redis:alpine
+    restart: always
+    networks:
       - default
 
   collabora:

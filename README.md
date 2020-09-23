@@ -139,7 +139,17 @@ Navigate to cloud.$DOMAINNAME and follow the setup process finalize the installa
 
 Once logged in, navigate to Apps from the user menu in the upper right.  Disable the Email app and enable the dms-sync and RainLoop apps.
 
-Go back to the upper right and select settings from the user menu. Scroll down to Administration and select Collabora Online Development Edition. Select the User your own server radio button and enter https://office.cloud.$DOMAINNAME as the URL and click Save.
+Go back to the upper right and select settings from the user menu. Scroll down to Administration and select Basic Settings.  Set Background Jobs to Cron then fill out the Email Server section with the following entries substituting example.com with the base domain.
+
+```
+Send Mode - SMTP - Encryption - None
+From Address postmaster @ example.com
+Authentication Method - Login - Yes - Authentication Required
+Server Address - mail-server : 25
+Credentials - Refer to credentials recorded earlier for the default postmaster username and password.
+```
+
+Next go to the "Collabora Online Development Edition" Administration page. Select the User your own server radio button and enter https://office.cloud.$DOMAINNAME as the URL and click Save.
 
 From the left menu, scroll to and select Additional Settings from the bottom of the left menu.  Under the DMS-Sync Settings set the API domain enter https://api.mail.$DOMAINNAME along with the api credentials recorded from the previous steps, default domain and quota. 
 

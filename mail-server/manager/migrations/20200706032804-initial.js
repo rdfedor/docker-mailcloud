@@ -57,7 +57,7 @@ exports.up = async (db) => {
   console.log('-----------------------------------------------------------------')
 
   if (!fs.existsSync(DMS_POSTFIX_ACCOUNTS)) {
-    const dirPath = dirname(DMS_POSTFIX_ACCOUNTS)
+    const dirPath = path.dirname(DMS_POSTFIX_ACCOUNTS)
     if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath)
     fs.writeFileSync(DMS_POSTFIX_ACCOUNTS, `${adminEmail}@${domain}|${password}`)
   } else {
